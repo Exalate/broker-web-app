@@ -11,7 +11,6 @@ import ru.tinkoff.piapi.contract.v1.PositionsResponse;
 import ru.tinkoff.piapi.core.InvestApi;
 import ru.tinkoff.piapi.core.OperationsService;
 
-//import java.util.List;
 import java.util.List;
 
 @Service

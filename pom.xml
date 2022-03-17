@@ -55,6 +55,13 @@
             <version>1.0-M1</version>
         </dependency>
 
+<!--        implementation("io.springfox:springfox-boot-starter:3.0.0")-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
