@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    build:
+      context: services/postgres
+      dockerfile: dockerfile.development
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=vv
+      - POSTGRES_PASSWORD=qqq
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+
+
+#  app:
+#    build:
+#      context: services/app
+#      dockerfile: Dockerfile.development
+#    environment:
+#      - PORT=8091
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres/vv
+#      - JS_URL=http://localhost
+#    image: 'my-java-application'
+#    ports:
+#      - 8091:8091
+#    depends_on:
+#      - postgres
+
+#  js:
+#    build:
+#      context: services/js
+#      dockerfile: Dockerfile.development
+#    image: 'my-js-app'
+#    ports:
+#      - 80:80
+
+volumes:
+  db-data:
