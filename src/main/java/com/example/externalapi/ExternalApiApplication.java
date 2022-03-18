@@ -1,9 +1,11 @@
 package com.example.externalapi;
 
 import com.example.externalapi.mapper.ShareMapper;
+import com.example.externalapi.repository.ShareRepository;
 import com.example.externalapi.service.MainService;
 import com.example.externalapi.service.PortfolioService;
 import com.example.externalapi.service.PositionService;
+import com.example.externalapi.service.ShareService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,11 +19,8 @@ public class ExternalApiApplication implements CommandLineRunner {
     private final PortfolioService portfolioService;
     private final PositionService positionService;
     private final ShareMapper shareMapper;
-
-//    public ExternalapiApplication(MainService mainService, PortfolioService portfolioService) {
-//        this.mainService = mainService;
-//        this.portfolioService = portfolioService;
-//    }
+    private final ShareRepository shareRepository;
+    private final ShareService shareService;
 
     public static void main(String[] args) {
         SpringApplication.run(ExternalApiApplication.class, args);
@@ -32,42 +31,6 @@ public class ExternalApiApplication implements CommandLineRunner {
         if (args.length > 0) {
             System.out.println(args[0]);
         } else {
-            System.out.println("fig te");
-
-//            ShareDTO shareDTO = ShareCreateDTO.builder()
-//                    .code("codecodecode")
-//                    .ticker("TEST")
-//                    .build();
-
-//            Share share = shareMapper.toEntity(shareDTO);
-//            System.out.println(share);
-
-
-//            PositionInDTO.builder()
-//                    .share(ShareDTO.builder()
-//                            .code("BBG000QXWHD1")
-//                            .ticker("BIDU")
-//                            .id(1L)
-//                            .build())
-//                    .portfolio(PortfolioDTO.builder()
-//                            .name("Основной")
-//                            .id(1L)
-//                            .build())
-//                    .amount(100)
-//                    .build();
-//            var position = PositionInDTO.builder()
-//                    .portfolioId(1L)
-//                    .shareId(1L)
-//                    .amount(100)
-//                    .build();
-
-//            System.out.println(positionService.add(position));
-
-//            portfolioService.add("Основной");
-            mainService.addShare();
         }
-//        exit(0); // завершаем программу
     }
 }
-
-//1,BIDU,BBG000QXWHD1

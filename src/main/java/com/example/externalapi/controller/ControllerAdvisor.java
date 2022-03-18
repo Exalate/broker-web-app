@@ -1,5 +1,6 @@
 package com.example.externalapi.controller;
 
+import com.example.externalapi.exception.ElementIsUsed;
 import com.example.externalapi.exception.IncorrectOperation;
 import com.example.externalapi.exception.NotFoundException;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,11 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(IncorrectOperation.class)
     protected ResponseEntity<Clarification> handleIncorrectOperation(Exception exception) {
+        return new ResponseEntity<>(new Clarification(exception.getMessage()), HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(ElementIsUsed.class)
+    protected ResponseEntity<Clarification> handleElementIsUsed(Exception exception) {
         return new ResponseEntity<>(new Clarification(exception.getMessage()), HttpStatus.NOT_ACCEPTABLE);
     }
 

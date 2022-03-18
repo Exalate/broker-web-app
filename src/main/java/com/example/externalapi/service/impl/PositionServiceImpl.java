@@ -51,7 +51,7 @@ public class PositionServiceImpl implements PositionService {
                     throw new EntityExistsException(
                             String.format(POSITION_ALREADY_EXIST_COMBINATION_PORTFOLIO_SHARE, position.getId()));
                 });
-        return positionMapper.toDto(positionMapper.toEntity(positionInDTO));
+        return positionMapper.toDto(positionRepository.save(positionMapper.toEntity(positionInDTO)));
     }
 
     @Override

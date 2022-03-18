@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface ShareRepository extends JpaRepository<Share, Long> {
     Optional<Share> findFirstByCode(String code);
+
+    Optional<Share> findByTickerIsLike(String ticker);
 }

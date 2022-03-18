@@ -20,36 +20,36 @@ public class MainServiceImpl implements MainService {
     private final InvestApi investApi;
     private final ShareService shareService;
 
-    private void ttt() {
-        List<Account> accountsId = investApi.getUserService().getAccountsSync();
-        accountsId.forEach(account -> {
-            try {
-                OperationsService operationsService = investApi.getOperationsService();
-                PositionsResponse positionsSync = operationsService.getPositionsSync(account.getId());
-                for (int a = 0; a < positionsSync.getSecuritiesCount(); a++) {
-                    var figi = positionsSync.getSecurities(a).getFigi();
-                    Instrument instrument = investApi.getInstrumentsService().getInstrumentByFigiSync(figi).get();
-                    if (!"share".equals(instrument.getInstrumentType())) {
-                        continue;
-                    }
-                    var share = ShareCreateDTO.builder()
-                            .code(figi)
-                            .ticker(instrument.getTicker())
-                            .build();
-                    var shareDB = shareService.create(share);
-                    System.out.println(">>>в базе:");
-                    System.out.println(shareDB);
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        });
-    }
+//    private void ttt() {
+//        List<Account> accountsId = investApi.getUserService().getAccountsSync();
+//        accountsId.forEach(account -> {
+//            try {
+//                OperationsService operationsService = investApi.getOperationsService();
+//                PositionsResponse positionsSync = operationsService.getPositionsSync(account.getId());
+//                for (int a = 0; a < positionsSync.getSecuritiesCount(); a++) {
+//                    var figi = positionsSync.getSecurities(a).getFigi();
+//                    Instrument instrument = investApi.getInstrumentsService().getInstrumentByFigiSync(figi).get();
+//                    if (!"share".equals(instrument.getInstrumentType())) {
+//                        continue;
+//                    }
+//                    var share = ShareCreateDTO.builder()
+//                            .code(figi)
+//                            .ticker(instrument.getTicker())
+//                            .build();
+//                    var shareDB = shareService.create(share);
+//                    System.out.println(">>>в базе:");
+//                    System.out.println(shareDB);
+//                }
+//            } catch (Exception e) {
+//                System.out.println(e.getMessage());
+//            }
+//        });
+//    }
 
     @Override
     public void addShare() {
 
-        ttt();
+//        ttt();
 
 //        try {
 //            System.out.println(investApi.getInstrumentsService().getAllShares().get()

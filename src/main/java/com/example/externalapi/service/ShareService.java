@@ -16,4 +16,6 @@ public interface ShareService {
     ShareDTO update(ShareUpdateDTO shareDTO);
 
     void delete(Long id);
+
+    ShareDTO get(String ticker);
 }

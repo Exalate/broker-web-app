@@ -4,7 +4,6 @@ import com.example.externalapi.DTO.PortfolioDTO;
 import com.example.externalapi.service.PortfolioService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import liquibase.pro.packaged.A;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/portfolios")
 @RequiredArgsConstructor
-@Api("Работа с портфелем")
+@Api(tags = "Портфели")
 public class PortfolioController {
 
     private final PortfolioService portfolioService;
