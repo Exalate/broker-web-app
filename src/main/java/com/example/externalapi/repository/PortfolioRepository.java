@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
     Optional<Portfolio> findFirstByName(String name);
+
+    Optional<Portfolio> findFirstByExternalId(Long externalId);
 }

@@ -1,6 +1,7 @@
 package com.example.externalapi.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import javax.persistence.Table;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "portfolios")
 public class Portfolio {
 
@@ -27,5 +29,13 @@ public class Portfolio {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Builder.Default
+    @Column(name = "is_broker")
+    private Boolean isBroker = false;
+
+    @Builder.Default
+    @Column(name = "external_id")
+    private Long externalId = 0L;
 
 }

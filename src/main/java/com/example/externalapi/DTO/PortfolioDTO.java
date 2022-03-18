@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class PortfolioDTO {
     private Long id;
     private String name;
+    private Boolean isBroker;
+    private Long externalID;
 }

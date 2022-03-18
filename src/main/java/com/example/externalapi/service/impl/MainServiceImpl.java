@@ -1,24 +1,28 @@
 package com.example.externalapi.service.impl;
 
-import com.example.externalapi.DTO.share.ShareCreateDTO;
+import com.example.externalapi.entity.Portfolio;
+import com.example.externalapi.repository.PortfolioRepository;
 import com.example.externalapi.service.MainService;
-import com.example.externalapi.service.ShareService;
+import com.example.externalapi.service.PortfolioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.Account;
-import ru.tinkoff.piapi.contract.v1.Instrument;
-import ru.tinkoff.piapi.contract.v1.PositionsResponse;
+import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InvestApi;
-import ru.tinkoff.piapi.core.OperationsService;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
 public class MainServiceImpl implements MainService {
 
     private final InvestApi investApi;
-    private final ShareService shareService;
+    private final PortfolioService portfolioService;
+    private final PortfolioRepository portfolioRepository;
+
+
 
 //    private void ttt() {
 //        List<Account> accountsId = investApi.getUserService().getAccountsSync();
@@ -64,5 +68,74 @@ public class MainServiceImpl implements MainService {
 //        catch (Exception e) {
 //
 //        }
+    }
+
+    @Override
+    public void updatePortfolio() {
+
+        //Получить портфели
+
+        var accounts = investApi.getUserService().getAccountsSync();
+
+        accounts.stream().forEach(account -> {
+            portfolioService.correlateBroker(Long.parseLong(account.getId()), account.getName());
+        });
+
+        //Записать их с ID, если таких нет
+
+
+
+
+
+
+
+
+
+
+
+        //портфели
+//        var accounts = investApi.getUserService().getAccountsSync();
+
+        System.out.println(accounts);
+
+        //портфель
+        Account account = accounts.stream().findFirst().orElseThrow();
+        System.out.println(account.getName());
+
+        var accountId = accounts.stream().findFirst().orElseThrow().getId();
+
+        //Получаем и печатаем портфолио
+        var portfolio = investApi.getOperationsService().getPortfolioSync(accountId);
+
+//        System.out.println(portfolio);
+
+
+//        try {
+//            List<Share> shares = investApi.getInstrumentsService().getAllShares().get().stream()
+//                    ;
+//        }
+//        catch (InterruptedException | ExecutionException exception) {
+//            System.out.println(exception.getLocalizedMessage());
+//        }
+//
+//
+////                log.info("список ценно-бумажных позиций портфеля");
+//        var securities = positions.getSecurities();
+//        for (SecurityPosition security : securities) {
+//            var figi = security.getFigi();
+//            var balance = security.getBalance();
+//            var blocked = security.getBlocked();
+//            log.info("figi: {}, текущий баланс: {}, заблокировано: {}", figi, balance, blocked);
+//        }
+    }
+
+    @Override
+    public String getNamePortfolioById(String id) {
+        var accounts = investApi.getUserService().getAccountsSync();
+        return accounts.stream()
+                .filter(account -> id.equals(account.getId()))
+                .map(Account::getName)
+                .findFirst()
+                .orElse("");
     }
 }

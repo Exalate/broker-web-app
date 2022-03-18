@@ -2,6 +2,7 @@ package com.example.externalapi.service.impl;
 
 import com.example.externalapi.DTO.position.PositionDTO;
 import com.example.externalapi.DTO.position.PositionInDTO;
+import com.example.externalapi.entity.Portfolio;
 import com.example.externalapi.entity.Position;
 import com.example.externalapi.exception.IncorrectOperation;
 import com.example.externalapi.exception.NotFoundException;
@@ -83,6 +84,13 @@ public class PositionServiceImpl implements PositionService {
         return positionRepository.findAllByPortfolioId(id).stream()
                 .map(positionMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void replaceRelations(Portfolio portfolioKeep, Portfolio portfolioDelete) {
+        positionRepository.findAllByPortfolio(portfolioDelete)
+            .forEach(position -> position.setPortfolio(portfolioKeep));
     }
 
 }

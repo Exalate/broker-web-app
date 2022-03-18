@@ -16,4 +16,6 @@ public interface PortfolioService {
     PortfolioDTO update(PortfolioDTO portfolioDTO);
 
     void delete(Long id);
+
+    PortfolioDTO correlateBroker(Long externalId, String name);
 }

@@ -31,6 +31,7 @@ public class ExternalApiApplication implements CommandLineRunner {
         if (args.length > 0) {
             System.out.println(args[0]);
         } else {
+            mainService.updatePortfolio();
         }
     }
 }
