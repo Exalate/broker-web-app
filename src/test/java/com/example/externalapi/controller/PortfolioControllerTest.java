@@ -43,7 +43,6 @@ public class PortfolioControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-
     private Portfolio portfolio;
 
     @Before
@@ -107,8 +106,6 @@ public class PortfolioControllerTest {
 
     @Test
     public void deletePortfolio() throws Exception {
-        System.out.println(portfolioRepository.findAll());
-
         mockMvc.perform(delete("/portfolios/" + portfolio.getId()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk());

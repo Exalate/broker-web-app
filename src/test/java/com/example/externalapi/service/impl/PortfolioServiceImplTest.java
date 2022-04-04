@@ -5,8 +5,6 @@ import com.example.externalapi.entity.Portfolio;
 import com.example.externalapi.repository.PortfolioRepository;
 import com.example.externalapi.repository.PositionRepository;
 import com.example.externalapi.service.PortfolioService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,20 +12,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @SpringBootTest
@@ -42,20 +32,14 @@ public class PortfolioServiceImplTest {
     private PortfolioRepository portfolioRepository;
     @Autowired
     private PositionRepository positionRepository;
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private PortfolioService portfolioService;
-
-//    private Portfolio portfolio;
 
     @Before
     public void setUp() {
         positionRepository.deleteAllInBatch();
         portfolioRepository.deleteAllInBatch();
-
-
     }
 
     @After
@@ -77,7 +61,7 @@ public class PortfolioServiceImplTest {
 
         assertEquals(1, portfolioRepository.findAll().size());
 
-        PortfolioDTO portfolioDTO = portfolioService.correlateBroker(portfolio.getExternalId(), portfolio.getName());
+        portfolioService.correlateBroker(portfolio.getExternalId(), portfolio.getName());
 
         //должен у существующего изменить isBroker, если требуется
         assertEquals(1, portfolioRepository.findAll().size());
@@ -120,7 +104,7 @@ public class PortfolioServiceImplTest {
                 .name("999")
                 .build());
 
-        final Portfolio portfolio2 = portfolioRepository.save(Portfolio.builder()
+        portfolioRepository.save(Portfolio.builder()
                 .isBroker(false)
 //                .externalId(null)
                 .name(notEqualsName)
