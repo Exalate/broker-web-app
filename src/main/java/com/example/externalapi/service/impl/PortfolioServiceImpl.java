@@ -9,7 +9,6 @@ import com.example.externalapi.repository.PortfolioRepository;
 import com.example.externalapi.service.MainService;
 import com.example.externalapi.service.PortfolioService;
 import com.example.externalapi.service.PositionService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -101,13 +100,13 @@ public class PortfolioServiceImpl implements PortfolioService {
         if (portfolioByExternalId.isPresent()) { //нашел 1-1
             portfolio = portfolioByExternalId.get();
             //проверить имя
-            if (!portfolio.getName().equals(name)) { //имя совпадает
+            if (!portfolio.getName().equals(name)) {
                 //имя не совпадает, нужно переименовать, но перед эти проверить,
                 // а нет ли где то еще такого же имени, которое мы хотим установить сюда
                 Optional<Portfolio> portfolioByNameOpt = portfolioRepository.findFirstByName(name);
                 if (portfolioByNameOpt.isPresent()) { //нашелся с таким же именем
                     Portfolio conflictPortfolio = portfolioByNameOpt.get();
-                    if (portfolio.getExternalId() > 0) { //заполнен ID
+                    if (conflictPortfolio.getExternalId() > 0) { //заполнен ID
                         //КОНФЛИКТ external ID (есть элемент с "нашим именем"
                         // и у него заполнен другой(т.к. поиск по нашему ничего не нашел) ID)
                         //нужно брать этот ID, проверять его актуальность на "той" стороне
@@ -127,12 +126,14 @@ public class PortfolioServiceImpl implements PortfolioService {
                         //нужно мержить(удалить перед этим переправив все ссылки на нашу изначальную portfolio)!!!!!!!!!!!!!!
                         // или просто удалять, если на нее нет ссылок например в Position
                         mergePortfolios(portfolio, conflictPortfolio);
+                        portfolio.setName(name);
                     }
                 } else {//не нашлось элементов с таким имененм
                     //переименовать и ок
                     portfolio.setName(name);
                 }
             }
+            portfolio.setIsBroker(true);
             return portfolioMapper.toDto(portfolio);
         } else { // не нашел 1-2
 

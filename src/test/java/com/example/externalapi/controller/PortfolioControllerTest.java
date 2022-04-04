@@ -47,7 +47,7 @@ public class PortfolioControllerTest {
     private Portfolio portfolio;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         positionRepository.deleteAllInBatch();
         portfolioRepository.deleteAllInBatch();
 
@@ -107,6 +107,8 @@ public class PortfolioControllerTest {
 
     @Test
     public void deletePortfolio() throws Exception {
+        System.out.println(portfolioRepository.findAll());
+
         mockMvc.perform(delete("/portfolios/" + portfolio.getId()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk());
