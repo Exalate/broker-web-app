@@ -13,7 +13,7 @@ public class MainServiceImpl implements MainService {
     private final InvestApi investApi;
     private final PortfolioService portfolioService;
 
-    public MainServiceImpl(InvestApi investApi,@Lazy PortfolioService portfolioService) {
+    public MainServiceImpl(InvestApi investApi, @Lazy PortfolioService portfolioService) {
         this.portfolioService = portfolioService;
         this.investApi = investApi;
     }
@@ -35,15 +35,6 @@ public class MainServiceImpl implements MainService {
         });
 
         //Записать их с ID, если таких нет
-
-
-
-
-
-
-
-
-
 
 
         //портфели

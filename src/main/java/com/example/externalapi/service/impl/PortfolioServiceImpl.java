@@ -86,8 +86,9 @@ public class PortfolioServiceImpl implements PortfolioService {
     public void delete(Long id) {
         //TODO правльное удаление(использование Optional)?
         portfolioRepository.findById(id).ifPresentOrElse(portfolioRepository::delete,
-                () -> {throw new NotFoundException(String.format(PORTFOLIO_NOT_FOUND, id));
-        });
+                () -> {
+                    throw new NotFoundException(String.format(PORTFOLIO_NOT_FOUND, id));
+                });
     }
 
     @Override
@@ -101,12 +102,12 @@ public class PortfolioServiceImpl implements PortfolioService {
             portfolio = portfolioByExternalId.get();
             //проверить имя
             if (!portfolio.getName().equals(name)) { //имя совпадает
-             //имя не совпадает, нужно переименовать, но перед эти проверить,
-                   // а нет ли где то еще такого же имени, которое мы хотим установить сюда
+                //имя не совпадает, нужно переименовать, но перед эти проверить,
+                // а нет ли где то еще такого же имени, которое мы хотим установить сюда
                 Optional<Portfolio> portfolioByNameOpt = portfolioRepository.findFirstByName(name);
                 if (portfolioByNameOpt.isPresent()) { //нашелся с таким же именем
                     Portfolio conflictPortfolio = portfolioByNameOpt.get();
-                    if (portfolio.getExternalId()>0) { //заполнен ID
+                    if (portfolio.getExternalId() > 0) { //заполнен ID
                         //КОНФЛИКТ external ID (есть элемент с "нашим именем"
                         // и у него заполнен другой(т.к. поиск по нашему ничего не нашел) ID)
                         //нужно брать этот ID, проверять его актуальность на "той" стороне
@@ -114,60 +115,54 @@ public class PortfolioServiceImpl implements PortfolioService {
                                 conflictPortfolio.getExternalId().toString());
                         if (name.equals(namePortfolioById)) {
                             throw new DataConflict(String.format(CONFLICT_CURRENT_AND_SERVICE_DATA
-                                    + ": Incoming name and externalId have conflict internal portfolio ID=%d",
+                                            + ": Incoming name and externalId have conflict internal portfolio ID=%d",
                                     conflictPortfolio.getId()));
-                        }
-                        else {
+                        } else {
                             //меняем наименование у другого, по его externalID оказывается другое имя
                             conflictPortfolio.setName(namePortfolioById);
                         }
-                    }
-                    else { //не заполнен ID
+                    } else { //не заполнен ID
                         //Нужно установить ему наш ID
                         //Нельзя, т.к. есть запись с таким ID(нашлась в самом начале)
                         //нужно мержить(удалить перед этим переправив все ссылки на нашу изначальную portfolio)!!!!!!!!!!!!!!
                         // или просто удалять, если на нее нет ссылок например в Position
                         mergePortfolios(portfolio, conflictPortfolio);
                     }
-                }
-                else {//не нашлось элементов с таким имененм
+                } else {//не нашлось элементов с таким имененм
                     //переименовать и ок
                     portfolio.setName(name);
                 }
             }
             return portfolioMapper.toDto(portfolio);
-        }
-        else { // не нашел 1-2
+        } else { // не нашел 1-2
 
             //поиск по имени
             Optional<Portfolio> portfolioByName = portfolioRepository.findFirstByName(name);
-                if (portfolioByName.isPresent()) {//нашел по имени
-                    //смотрим на externalID
-                    portfolio = portfolioByName.get();
-                    if (portfolio.getExternalId()>0) {//---external ID заполнен
-                        //------КОНФЛИКТ нашелся элемент с нашим именем, но другим external ID
-                        //------нужно брать этот ID, проверять его актуальность на "той" стороне
-                        String namePortfolioById = mainService.getNamePortfolioById(
-                                portfolio.getExternalId().toString());
+            if (portfolioByName.isPresent()) {//нашел по имени
+                //смотрим на externalID
+                portfolio = portfolioByName.get();
+                if (portfolio.getExternalId() > 0) {//---external ID заполнен
+                    //------КОНФЛИКТ нашелся элемент с нашим именем, но другим external ID
+                    //------нужно брать этот ID, проверять его актуальность на "той" стороне
+                    String namePortfolioById = mainService.getNamePortfolioById(
+                            portfolio.getExternalId().toString());
 
-                        //Если имя на самом деле другое, меняем его у найденного и смело создаем новый
-                        if (!portfolio.getName().equals(namePortfolioById)) {
-                            portfolio.setName(namePortfolioById);
-                            add(name, externalId);
-                        }
-                        throw new DataConflict(String.format(CONFLICT_CURRENT_AND_SERVICE_DATA
-                                        + ": Incoming name and externalId have conflict internal portfolio ID=%d",
-                                portfolio.getId()));
+                    //Если имя на самом деле другое, меняем его у найденного и смело создаем новый
+                    if (!portfolio.getName().equals(namePortfolioById)) {
+                        portfolio.setName(namePortfolioById);
+                        add(name, externalId);
                     }
-                    else {//---external ID не заполнен
-                          //------подменяем external ID и
-                        portfolio.setExternalId(externalId);
-                    }
+                    throw new DataConflict(String.format(CONFLICT_CURRENT_AND_SERVICE_DATA
+                                    + ": Incoming name and externalId have conflict internal portfolio ID=%d",
+                            portfolio.getId()));
+                } else {//---external ID не заполнен
+                    //------подменяем external ID и
+                    portfolio.setExternalId(externalId);
                 }
-                else { //не нашел по имени
-                    //создаем новый элемент и
-                    return add(name, externalId);
-                }
+            } else { //не нашел по имени
+                //создаем новый элемент и
+                return add(name, externalId);
+            }
         }
         return portfolioMapper.toDto(portfolio);
     }

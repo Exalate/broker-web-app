@@ -90,7 +90,7 @@ public class PositionServiceImpl implements PositionService {
     @Transactional
     public void replaceRelations(Portfolio portfolioKeep, Portfolio portfolioDelete) {
         positionRepository.findAllByPortfolio(portfolioDelete)
-            .forEach(position -> position.setPortfolio(portfolioKeep));
+                .forEach(position -> position.setPortfolio(portfolioKeep));
     }
 
 }

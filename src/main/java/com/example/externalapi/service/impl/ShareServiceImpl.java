@@ -64,13 +64,15 @@ public class ShareServiceImpl implements ShareService {
     @Override
     public void delete(Long id) {
         shareRepository.findById(id).ifPresentOrElse(share -> {
-                    try{shareRepository.delete(share);
+                    try {
+                        shareRepository.delete(share);
                     } catch (Exception e) {
-                        throw new ElementIsUsed(String.format(SHARE_IS_USED + " <<>> " + e.getMessage(),id));
+                        throw new ElementIsUsed(String.format(SHARE_IS_USED + " <<>> " + e.getMessage(), id));
                     }
                 },
-                () -> {throw new NotFoundException(String.format(SHARE_NOT_FOUND, id));
-        });
+                () -> {
+                    throw new NotFoundException(String.format(SHARE_NOT_FOUND, id));
+                });
     }
 
     @Override
