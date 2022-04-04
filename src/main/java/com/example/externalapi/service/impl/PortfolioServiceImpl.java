@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class PortfolioServiceImpl implements PortfolioService {
 
     private static final String PORTFOLIO_NOT_FOUND = "Portfolio ID=%d not found";
@@ -30,6 +29,14 @@ public class PortfolioServiceImpl implements PortfolioService {
     private final PortfolioMapper portfolioMapper;
     private final MainService mainService;
     private final PositionService positionService;
+
+    public PortfolioServiceImpl(PortfolioRepository portfolioRepository, PortfolioMapper portfolioMapper,
+                                MainService mainService, PositionService positionService) {
+        this.portfolioRepository = portfolioRepository;
+        this.portfolioMapper = portfolioMapper;
+        this.mainService = mainService;
+        this.positionService = positionService;
+    }
 
     @Override
     @Transactional

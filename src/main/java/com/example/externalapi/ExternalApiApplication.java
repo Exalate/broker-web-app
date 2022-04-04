@@ -28,10 +28,10 @@ public class ExternalApiApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (args.length > 0) {
-            System.out.println(args[0]);
-        } else {
-            mainService.updatePortfolio();
-        }
+//        if (args.length > 0) {
+//            System.out.println(args[0]);
+//        } else {
+//            mainService.updatePortfolio();
+//        }
     }
 }
