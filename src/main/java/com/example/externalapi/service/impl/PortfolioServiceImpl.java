@@ -119,6 +119,7 @@ public class PortfolioServiceImpl implements PortfolioService {
                         } else {
                             //меняем наименование у другого, по его externalID оказывается другое имя
                             conflictPortfolio.setName(namePortfolioById);
+                            portfolio.setName(name);
                         }
                     } else { //не заполнен ID
                         //Нужно установить ему наш ID
