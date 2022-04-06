@@ -92,7 +92,7 @@ public class PortfolioServiceImpl implements PortfolioService {
 
     @Override
     @Transactional
-    public PortfolioDTO correlateBroker(Long externalId, String name) {
+    public PortfolioDTO correlateBroker(Long externalId, String name) throws DataConflict {
 
         //поиск по ID
         Optional<Portfolio> portfolioByExternalId = portfolioRepository.findFirstByExternalId(externalId);

@@ -2,8 +2,10 @@ package com.example.externalapi.service.impl;
 
 import com.example.externalapi.DTO.PortfolioDTO;
 import com.example.externalapi.entity.Portfolio;
+import com.example.externalapi.exception.DataConflict;
 import com.example.externalapi.repository.PortfolioRepository;
 import com.example.externalapi.repository.PositionRepository;
+import com.example.externalapi.service.MainService;
 import com.example.externalapi.service.PortfolioService;
 import org.junit.After;
 import org.junit.Before;
@@ -12,11 +14,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 @Transactional
@@ -26,12 +29,12 @@ import static org.junit.Assert.assertTrue;
 public class PortfolioServiceImplTest {
 
     @Autowired
-    protected MockMvc mockMvc;
-
-    @Autowired
     private PortfolioRepository portfolioRepository;
     @Autowired
     private PositionRepository positionRepository;
+
+    @MockBean
+    private MainService mainService;
 
     @Autowired
     private PortfolioService portfolioService;
@@ -119,6 +122,31 @@ public class PortfolioServiceImplTest {
         assertEquals(1, portfolioRepository.findAll().size());
         assertEquals(notEqualsName, portfolioDTO.getName());
         assertTrue(portfolioDTO.getIsBroker());
+    }
+
+    @Test
+    public void correlateBrokerExternalIdExistAndItNameNotEqualsAndExistInAnotherPortfolioWithNotEmptyExternalId() {
+        //Нашел существующий ExternalID и его name НЕ совпал, при этом такой name есть в другом Portfolio,
+        //                                       и у этого Portfolio НЕ пустой ExternalID и он есть во внешнем сервисе
+
+        final String notEqualsName = "555";
+        org.mockito.BDDMockito.given(mainService.getNamePortfolioById("888")).willReturn("555");
+
+        final Portfolio portfolio1 = portfolioRepository.save(Portfolio.builder()
+                .isBroker(true)
+                .externalId(999L)
+                .name("999")
+                .build());
+
+        final Portfolio portfolio2 = portfolioRepository.save(Portfolio.builder()
+                .isBroker(true)
+                .externalId(888L)
+                .name(notEqualsName)
+                .build());
+
+        //должен быть exception
+        assertThrows(DataConflict.class, () ->
+                portfolioService.correlateBroker(portfolio1.getExternalId(), notEqualsName));
     }
 
 }
