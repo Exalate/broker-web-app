@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
 
 @Transactional
@@ -155,7 +156,7 @@ public class PortfolioServiceImplTest {
 
     @Test
     public void correlateBrokerExternalIdNotExist() {
-        //по externalId не нашлось, по name тоже
+        //по externalId не нашлось, по name не нашлось
 
         Long newExternalId = 351654L;
         String newName = "not found name";
@@ -170,6 +171,74 @@ public class PortfolioServiceImplTest {
         assertNull(portfolioBeforeCheck);
         assertEquals(newExternalId, portfolioAfterCheck.getExternalId());
         assertEquals(newName, portfolioAfterCheck.getName());
+    }
+
+    @Test
+    public void correlateBrokerExternalIdNotExistAndNameExist() {
+        //по externalId не нашлось, по name нашел и там пустой externalId
+        String newName = "new name";
+        Long newExternalId = 351654L;
+
+        portfolioRepository.save(Portfolio.builder()
+                .isBroker(false)
+                .name(newName)
+                .build());
+
+        portfolioService.correlateBroker(newExternalId, newName);
+
+        Portfolio portfolioChekAfter = portfolioRepository.findFirstByName(newName).orElse(null);
+
+        assertNotNull(portfolioChekAfter);
+        assertEquals(true, portfolioChekAfter.getIsBroker());
+        assertEquals(newExternalId, portfolioChekAfter.getExternalId());
+    }
+
+    @Test
+    public void correlateBrokerExternalIdNotExistAndNameExistAndThereNotEmptyExternalId() {
+        //по externalId не нашлось, по name нашел и там НЕ пустой externalId
+        //                  externalId не совпадают, т.к. мы бы сюда не попали
+        String name = "new name";
+        Long newExternalId = 351654L;
+
+        portfolioRepository.save(Portfolio.builder()
+                .isBroker(true)
+                .name(name)
+                .externalId(newExternalId)
+                .build());
+
+        given(mainService.getNamePortfolioById(newExternalId.toString())).willReturn("name from external service");
+
+        portfolioService.correlateBroker(444444L, name);
+
+        Portfolio portfolioConflictAfter = portfolioRepository.findFirstByExternalId(newExternalId).orElse(null);
+        Portfolio newPortfolio = portfolioRepository.findFirstByExternalId(444444L).orElse(null);
+
+        assertNotNull(portfolioConflictAfter);
+        assertEquals("name from external service", portfolioConflictAfter.getName());
+        assertEquals(true, portfolioConflictAfter.getIsBroker());
+
+        assertNotNull(newPortfolio);
+        assertEquals(name, newPortfolio.getName());
+        assertEquals(true, newPortfolio.getIsBroker());
+
+    }
+
+    @Test
+    public void correlateBrokerExternalIdNotExistAndNameExistAndThereNotEmptyExternalIdAndExternalNameEquals() {
+        //по externalId не нашлось, по name нашел и там НЕ пустой externalId
+        //                  externalId не совпадают, т.к. мы бы сюда не попали
+
+//        portfolio1 = portfolioRepository.save(Portfolio.builder()
+//                .isBroker(true)
+//                .externalId(999L)
+//                .name("999")
+//                .build());
+
+
+        given(mainService.getNamePortfolioById("999")).willReturn(portfolio1.getName());
+
+        assertThrows(DataConflict.class, () -> portfolioService.correlateBroker(444L, portfolio1.getName()));
+
     }
 
 }

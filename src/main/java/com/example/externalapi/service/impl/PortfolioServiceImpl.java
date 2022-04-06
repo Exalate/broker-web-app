@@ -139,27 +139,29 @@ public class PortfolioServiceImpl implements PortfolioService {
         } else { // не нашел 1-2
 
             //поиск по имени
-            Optional<Portfolio> portfolioByName = portfolioRepository.findFirstByName(name);
-            if (portfolioByName.isPresent()) {//нашел по имени
+            Optional<Portfolio> portfolioByNameOpt = portfolioRepository.findFirstByName(name);
+            if (portfolioByNameOpt.isPresent()) {//нашел по имени
                 //смотрим на externalID
-                portfolio = portfolioByName.get();
-                if (portfolio.getExternalId() > 0) {//---external ID заполнен
+                Portfolio portfolioByName = portfolioByNameOpt.get();
+                if (portfolioByName.getExternalId() > 0) {//---external ID заполнен
                     //------КОНФЛИКТ нашелся элемент с нашим именем, но другим external ID
                     //------нужно брать этот ID, проверять его актуальность на "той" стороне
                     String namePortfolioById = mainService.getNamePortfolioById(
-                            portfolio.getExternalId().toString());
+                            portfolioByName.getExternalId().toString());
 
                     //Если имя на самом деле другое, меняем его у найденного и смело создаем новый
-                    if (!portfolio.getName().equals(namePortfolioById)) {
-                        portfolio.setName(namePortfolioById);
-                        add(name, externalId);
+                    if (!portfolioByName.getName().equals(namePortfolioById)) {
+                        portfolioByName.setName(namePortfolioById);
+                        return add(name, externalId);
                     }
                     throw new DataConflict(String.format(CONFLICT_CURRENT_AND_SERVICE_DATA
                                     + ": Incoming name and externalId have conflict internal portfolio ID=%d",
-                            portfolio.getId()));
+                            portfolioByName.getId()));
                 } else {//---external ID не заполнен
                     //------подменяем external ID и
+                    portfolio = portfolioByName;
                     portfolio.setExternalId(externalId);
+                    portfolio.setIsBroker(true);
                 }
             } else { //не нашел по имени
                 //создаем новый элемент и
