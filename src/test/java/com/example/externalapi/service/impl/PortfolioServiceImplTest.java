@@ -228,17 +228,9 @@ public class PortfolioServiceImplTest {
         //по externalId не нашлось, по name нашел и там НЕ пустой externalId
         //                  externalId не совпадают, т.к. мы бы сюда не попали
 
-//        portfolio1 = portfolioRepository.save(Portfolio.builder()
-//                .isBroker(true)
-//                .externalId(999L)
-//                .name("999")
-//                .build());
-
-
         given(mainService.getNamePortfolioById("999")).willReturn(portfolio1.getName());
 
         assertThrows(DataConflict.class, () -> portfolioService.correlateBroker(444L, portfolio1.getName()));
-
     }
 
 }
