@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -116,7 +117,7 @@ public class PortfolioServiceImplTest {
 
         final String notEqualsName = "555";
 
-        final Portfolio portfolio2 = portfolioRepository.save(Portfolio.builder()
+        portfolioRepository.save(Portfolio.builder()
                 .isBroker(true)
                 .externalId(888L)
                 .name(notEqualsName)
@@ -136,7 +137,7 @@ public class PortfolioServiceImplTest {
 
         String notEqualsName = "555";
 
-        final Portfolio portfolio2 = portfolioRepository.save(Portfolio.builder()
+        portfolioRepository.save(Portfolio.builder()
                 .isBroker(true)
                 .externalId(888L)
                 .name(notEqualsName)
@@ -150,6 +151,25 @@ public class PortfolioServiceImplTest {
 
         assertEquals(notEqualsName, portfolioDTO.getName());
         assertEquals("name from external service", portfolio2Check.getName());
+    }
+
+    @Test
+    public void correlateBrokerExternalIdNotExist() {
+        //по externalId не нашлось, по name тоже
+
+        Long newExternalId = 351654L;
+        String newName = "not found name";
+
+        Portfolio portfolioBeforeCheck = portfolioRepository.findFirstByExternalId(newExternalId).orElse(null);
+
+        portfolioService.correlateBroker(newExternalId, newName);
+
+        Portfolio portfolioAfterCheck = portfolioRepository.findFirstByExternalId(newExternalId).orElseThrow();
+        //будет создана новая запись
+
+        assertNull(portfolioBeforeCheck);
+        assertEquals(newExternalId, portfolioAfterCheck.getExternalId());
+        assertEquals(newName, portfolioAfterCheck.getName());
     }
 
 }
